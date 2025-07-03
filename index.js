@@ -41,4 +41,4 @@ app.post("/",(req,res)=>{
 })
 
 connectWithDb()
-// log(models)
+log(models)
