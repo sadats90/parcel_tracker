@@ -30,6 +30,7 @@ app.get('/',(req,res)=>{
 
 app.post("/",(req,res)=>{
     const data = req.body
+    console.log(data)
     
     const user = new models.User({username:req.body.username, createdAt:Date.now()})
     user.save()
