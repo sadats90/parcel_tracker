@@ -28,6 +28,11 @@ app.get('/',(req,res)=>{
     res.send("Hello" + req.query.q)
 })
 
+app.get('/test',(req,res)=>{
+    res.send("test" + req.query.q)
+})
+
+
 app.post("/",(req,res)=>{
     const data = req.body
     console.log(data)
