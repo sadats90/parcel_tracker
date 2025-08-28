@@ -33,6 +33,9 @@ export const AuthProvider = ({ children }) => {
   const checkAuthStatus = async () => {
     try {
       const response = await axios.get('/api/auth/me');
+      console.log('Auth check response:', response.data);
+      console.log('User data from auth check:', response.data.data.user);
+      console.log('User role from auth check:', response.data.data.user?.role);
       setUser(response.data.data.user);
       setIsAuthenticated(true);
     } catch (error) {

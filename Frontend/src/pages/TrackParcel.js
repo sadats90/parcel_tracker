@@ -136,6 +136,9 @@ const TrackParcel = () => {
       </div>
 
       <div className="tracking-actions">
+        {console.log('User object:', user)}
+        {console.log('User role:', user?.role)}
+        {console.log('Is admin check:', user?.role === 'admin')}
         {user?.role === 'admin' && (
           <Link to={`/update/${parcel.trackingNumber}`} className="btn btn-primary">
             Update Status

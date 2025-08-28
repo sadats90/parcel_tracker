@@ -139,6 +139,9 @@ const ManageParcels = () => {
                 >
                   View Details
                 </Link>
+                {console.log('User object in ManageParcels:', user)}
+                {console.log('User role in ManageParcels:', user?.role)}
+                {console.log('Is admin check in ManageParcels:', user?.role === 'admin')}
                 {user?.role === 'admin' && (
                   <Link 
                     to={`/update/${parcel.trackingNumber}`} 
