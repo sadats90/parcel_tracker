@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
 import './ManageParcels.css';
 
 const ManageParcels = () => {
@@ -9,6 +10,7 @@ const ManageParcels = () => {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+  const { user } = useAuth();
 
   useEffect(() => {
     fetchParcels();
@@ -137,12 +139,14 @@ const ManageParcels = () => {
                 >
                   View Details
                 </Link>
-                <Link 
-                  to={`/update/${parcel.trackingNumber}`} 
-                  className="btn btn-primary btn-sm"
-                >
-                  Update Status
-                </Link>
+                {user?.role === 'admin' && (
+                  <Link 
+                    to={`/update/${parcel.trackingNumber}`} 
+                    className="btn btn-primary btn-sm"
+                  >
+                    Update Status
+                  </Link>
+                )}
               </div>
             </div>
           ))

@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
 import './UpdateParcel.css';
 
 const UpdateParcel = () => {
   const { trackingNumber } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [parcel, setParcel] = useState(null);
   const [formData, setFormData] = useState({
     status: '',
@@ -31,8 +33,16 @@ const UpdateParcel = () => {
   }, [trackingNumber]);
 
   useEffect(() => {
-    fetchParcel();
-  }, [fetchParcel]);
+    // Check if user is admin, if not redirect to home
+    if (user && user.role !== 'admin') {
+      navigate('/');
+      return;
+    }
+    
+    if (user?.role === 'admin') {
+      fetchParcel();
+    }
+  }, [fetchParcel, user, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -59,6 +69,15 @@ const UpdateParcel = () => {
       setLoading(false);
     }
   };
+
+  // Show loading while checking user role
+  if (!user || user.role !== 'admin') {
+    return (
+      <div className="update-parcel-page">
+        <div className="loading">Checking permissions...</div>
+      </div>
+    );
+  }
 
   if (fetchLoading) {
     return (

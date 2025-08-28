@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import ParcelMap from '../components/ParcelMap';
+import { useAuth } from '../context/AuthContext';
 import './TrackParcel.css';
 
 const TrackParcel = () => {
@@ -9,6 +10,7 @@ const TrackParcel = () => {
   const [parcel, setParcel] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { user } = useAuth();
 
   const fetchParcel = useCallback(async () => {
     try {
@@ -134,9 +136,11 @@ const TrackParcel = () => {
       </div>
 
       <div className="tracking-actions">
-        <Link to={`/update/${parcel.trackingNumber}`} className="btn btn-primary">
-          Update Status
-        </Link>
+        {user?.role === 'admin' && (
+          <Link to={`/update/${parcel.trackingNumber}`} className="btn btn-primary">
+            Update Status
+          </Link>
+        )}
         <Link to="/" className="btn btn-secondary">
           Track Another Package
         </Link>

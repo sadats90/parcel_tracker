@@ -13,9 +13,26 @@ import AuthTest from './components/AuthTest';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import './App.css';
 
+/**
+ * Route Protection:
+ * - PrivateRoute: Requires authentication (any logged-in user)
+ * - AdminRoute: Requires authentication + admin role
+ * 
+ * Security Model:
+ * - Regular users: Can only view and track their own parcels
+ * - Admin users: Can create, read, update, and manage all parcels
+ */
+
 const PrivateRoute = ({ children }) => {
   const { isAuthenticated } = useAuth();
   return isAuthenticated ? children : <Navigate to="/login" />;
+};
+
+const AdminRoute = ({ children }) => {
+  const { isAuthenticated, user } = useAuth();
+  if (!isAuthenticated) return <Navigate to="/login" />;
+  if (user?.role !== 'admin') return <Navigate to="/" />;
+  return children;
 };
 
 function App() {
@@ -42,25 +59,25 @@ function App() {
               <Route 
                 path="/add" 
                 element={
-                  <PrivateRoute>
+                  <AdminRoute>
                     <AddParcel />
-                  </PrivateRoute>
+                  </AdminRoute>
                 } 
               />
               <Route 
                 path="/update/:trackingNumber" 
                 element={
-                  <PrivateRoute>
+                  <AdminRoute>
                     <UpdateParcel />
-                  </PrivateRoute>
+                  </AdminRoute>
                 } 
               />
               <Route 
                 path="/manage-parcels" 
                 element={
-                  <PrivateRoute>
+                  <AdminRoute>
                     <ManageParcels />
-                  </PrivateRoute>
+                  </AdminRoute>
                 } 
               />
             </Routes>
