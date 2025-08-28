@@ -1,0 +1,378 @@
+{
+  "info": {
+    "name": "Parcel Tracker API",
+    "description": "Complete API collection for testing the Parcel Tracker application",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["health"]
+        }
+      }
+    },
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"password123\",\n  \"phone\": \"+8801712345678\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('token', response.data.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "me"]
+            }
+          }
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe Updated\",\n  \"phone\": \"+8801712345679\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "profile"]
+            }
+          }
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"password123\",\n  \"newPassword\": \"newpassword123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/password",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "password"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Parcels",
+      "item": [
+        {
+          "name": "Create New Parcel",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"trackingNumber\": \"TRK006789012\",\n  \"status\": \"picked_up\",\n  \"initialHistory\": {\n    \"location\": \"Gulshan-1 Collection Center\",\n    \"latitude\": 23.7937,\n    \"longitude\": 90.4066\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/parcels",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "parcels"]
+            }
+          }
+        },
+        {
+          "name": "Get Parcel by Tracking Number - Delivered",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/parcels/TRK001234567",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "parcels", "TRK001234567"]
+            }
+          }
+        },
+        {
+          "name": "Get Parcel by Tracking Number - Out for Delivery",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/parcels/TRK002345678",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "parcels", "TRK002345678"]
+            }
+          }
+        },
+        {
+          "name": "Get Parcel by Tracking Number - In Transit",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/parcels/TRK003456789",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "parcels", "TRK003456789"]
+            }
+          }
+        },
+        {
+          "name": "Get Parcel by Tracking Number - Exception",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/parcels/TRK004567890",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "parcels", "TRK004567890"]
+            }
+          }
+        },
+        {
+          "name": "Get Parcel by Tracking Number - Picked Up",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/parcels/TRK005678901",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "parcels", "TRK005678901"]
+            }
+          }
+        },
+        {
+          "name": "Update Parcel Status - Add Transit",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"in_transit\",\n  \"location\": \"Banani Transit Hub\",\n  \"latitude\": 23.7937,\n  \"longitude\": 90.4066\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/parcels/{{parcelId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "parcels", "{{parcelId}}", "status"]
+            }
+          }
+        },
+        {
+          "name": "Update Parcel Status - Out for Delivery",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"out_for_delivery\",\n  \"location\": \"Dhanmondi Local Office\",\n  \"latitude\": 23.7465,\n  \"longitude\": 90.3706\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/parcels/{{parcelId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "parcels", "{{parcelId}}", "status"]
+            }
+          }
+        },
+        {
+          "name": "Update Parcel Status - Delivered",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"delivered\",\n  \"location\": \"Uttara Delivery Point\",\n  \"latitude\": 23.8709,\n  \"longitude\": 90.3753\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/parcels/{{parcelId}}/status",
+              "url": "{{baseUrl}}/api/parcels/{{parcelId}}/status"
+            }
+          }
+        },
+        {
+          "name": "Update Parcel Status - Exception",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"exception\",\n  \"location\": \"Motijheel Processing Center\",\n  \"latitude\": 23.7289,\n  \"longitude\": 90.4154\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/parcels/{{parcelId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "parcels", "{{parcelId}}", "status"]
+            }
+          }
+        },
+        {
+          "name": "Get All Parcels",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/parcels",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "parcels"]
+            }
+          }
+        },
+        {
+          "name": "Get All Parcels with Pagination",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/parcels?page=1&limit=5",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "parcels"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "5"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Parcels by Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/parcels?status=in_transit",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "parcels"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "in_transit"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+} 

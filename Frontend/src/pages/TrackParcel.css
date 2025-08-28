@@ -1,0 +1,110 @@
+.tracking-page {
+  padding-top: 80px;
+  min-height: 100vh;
+}
+
+.tracking-header {
+  background: white;
+  padding: 30px;
+  margin-bottom: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tracking-header h1 {
+  color: #333;
+  margin-bottom: 20px;
+  font-size: 2rem;
+}
+
+.parcel-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.parcel-info p {
+  margin: 0;
+  color: #666;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 20px;
+  color: white;
+  font-weight: bold;
+  margin-left: 10px;
+  font-size: 14px;
+}
+
+.tracking-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+.map-section,
+.status-section {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.map-section h2,
+.status-section h2 {
+  color: #333;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+}
+
+.status-content h4 {
+  color: #333;
+  margin-bottom: 8px;
+  font-size: 1.1rem;
+}
+
+.status-content p {
+  color: #666;
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.location {
+  color: #007bff !important;
+  font-weight: 500;
+}
+
+.tracking-actions {
+  text-align: center;
+  margin-top: 30px;
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.tracking-actions .btn {
+  min-width: 150px;
+}
+
+@media (max-width: 768px) {
+  .tracking-content {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .parcel-info {
+    grid-template-columns: 1fr;
+  }
+  
+  .tracking-header {
+    padding: 20px;
+  }
+  
+  .tracking-header h1 {
+    font-size: 1.5rem;
+  }
+} 

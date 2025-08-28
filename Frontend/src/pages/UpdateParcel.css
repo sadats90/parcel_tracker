@@ -1,0 +1,63 @@
+.update-parcel-page {
+  padding-top: 80px;
+  min-height: 100vh;
+}
+
+.parcel-summary {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+  border-left: 4px solid #007bff;
+}
+
+.parcel-summary h3 {
+  color: #333;
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+}
+
+.parcel-summary p {
+  margin: 8px 0;
+  color: #666;
+}
+
+.update-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.update-form .form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.update-form .form-actions {
+  text-align: center;
+  margin-top: 20px;
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.update-form .form-actions button,
+.update-form .form-actions .btn {
+  min-width: 150px;
+  padding: 15px 30px;
+  font-size: 16px;
+}
+
+.update-form .form-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .update-form .form-row {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+} 
