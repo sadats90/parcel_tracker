@@ -63,6 +63,7 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/parcels', parcelRoutes);
+app.use('/create-admin', require('./create-admin'));
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -71,6 +72,75 @@ app.get('/health', (req, res) => {
     timestamp: new Date().toISOString(),
     uptime: process.uptime()
   });
+});
+
+// Test database connection and show collections
+app.get('/test-db', async (req, res) => {
+  try {
+    const mongoose = require('mongoose');
+    const db = mongoose.connection;
+    
+    if (db.readyState === 1) {
+      // Get all collections
+      const collections = await db.db.listCollections().toArray();
+      const collectionNames = collections.map(col => col.name);
+      
+      res.status(200).json({
+        status: 'Database Connected',
+        database: db.name,
+        collections: collectionNames,
+        readyState: db.readyState
+      });
+    } else {
+      res.status(500).json({
+        status: 'Database Not Connected',
+        readyState: db.readyState
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      status: 'Error',
+      message: error.message
+    });
+  }
+});
+
+// View all users (for testing - remove in production)
+app.get('/view-users', async (req, res) => {
+  try {
+    const User = require('../models/user');
+    const users = await User.find({}).select('-password'); // Don't show passwords
+    
+    res.status(200).json({
+      status: 'Success',
+      count: users.length,
+      users: users
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 'Error',
+      message: error.message
+    });
+  }
+});
+
+// View all parcels (for testing - remove in production)
+app.get('/view-parcels', async (req, res) => {
+  try {
+    const Parcel = require('../models/parcel');
+    const parcels = await Parcel.find({}).populate('user', 'name email');
+    
+    res.status(200).json({
+      status: 'Success',
+      count: parcels.length,
+      parcels: parcels
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 'Error',
+      message: error.message
+    });
+  }
 });
 
 // Root endpoint
