@@ -18,14 +18,34 @@ const app = express();
 // Security middleware
 app.use(helmet());
 
-// CORS configuration
+// CORS configuration - Allow all Vercel domains
 const corsOptions = {
-  origin: [
-    'http://localhost:3000', 
-    'http://127.0.0.1:3000',
-    'https://parcel-tracker-z868.vercel.app', // Your specific frontend domain
-    'https://*.vercel.app' // Allow all Vercel domains as fallback
-  ],
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    // Allow localhost for development
+    if (origin === 'http://localhost:3000' || origin === 'http://127.0.0.1:3000') {
+      return callback(null, true);
+    }
+    
+    // Allow all Vercel domains
+    if (origin.includes('vercel.app')) {
+      return callback(null, true);
+    }
+    
+    // Allow your specific domains
+    const allowedDomains = [
+      'https://parcel-tracker-z868.vercel.app',
+      'https://parcel-tracker-z868-r8mg0c29t-sadats-projects-70fa07bb.vercel.app'
+    ];
+    
+    if (allowedDomains.includes(origin)) {
+      return callback(null, true);
+    }
+    
+    callback(new Error('Not allowed by CORS'));
+  },
   credentials: true,
   optionsSuccessStatus: 200,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
