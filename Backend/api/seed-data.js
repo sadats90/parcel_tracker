@@ -76,29 +76,11 @@ router.post('/', async (req, res) => {
     const types = ['package', 'document', 'electronics', 'clothing', 'food', 'fragile'];
     const carriers = ['FedEx', 'UPS', 'DHL', 'USPS', 'Amazon Logistics'];
 
-    // Sample addresses with Dhaka locations and realistic coordinates
+    // Sample addresses with diverse Dhaka locations and realistic coordinates
     const addresses = [
-      // Dhaka, Bangladesh addresses
+      // Dhaka, Bangladesh addresses - spread across different areas
       { 
-        street: 'House 123, Road 12', 
-        city: 'Dhaka', 
-        state: 'Dhaka', 
-        zipCode: '1212', 
-        country: 'Bangladesh',
-        latitude: 23.7937,
-        longitude: 90.4066
-      },
-      { 
-        street: 'House 456, Road 8', 
-        city: 'Dhaka', 
-        state: 'Dhaka', 
-        zipCode: '1207', 
-        country: 'Bangladesh',
-        latitude: 23.8103,
-        longitude: 90.4125
-      },
-      { 
-        street: 'House 789, Road 27', 
+        street: 'House 123, Road 12, Banani', 
         city: 'Dhaka', 
         state: 'Dhaka', 
         zipCode: '1213', 
@@ -107,49 +89,103 @@ router.post('/', async (req, res) => {
         longitude: 90.4066
       },
       { 
-        street: 'House 321, Road 15', 
+        street: 'House 456, Road 8, Gulshan', 
+        city: 'Dhaka', 
+        state: 'Dhaka', 
+        zipCode: '1212', 
+        country: 'Bangladesh',
+        latitude: 23.8103,
+        longitude: 90.4125
+      },
+      { 
+        street: 'House 789, Road 27, Dhanmondi', 
         city: 'Dhaka', 
         state: 'Dhaka', 
         zipCode: '1209', 
         country: 'Bangladesh',
-        latitude: 23.7937,
-        longitude: 90.4066
+        latitude: 23.7458,
+        longitude: 90.3654
       },
       { 
-        street: 'House 654, Road 3', 
+        street: 'House 321, Road 15, Uttara', 
         city: 'Dhaka', 
         state: 'Dhaka', 
-        zipCode: '1205', 
+        zipCode: '1230', 
         country: 'Bangladesh',
-        latitude: 23.7937,
-        longitude: 90.4066
+        latitude: 23.8700,
+        longitude: 90.3800
       },
       { 
-        street: 'House 987, Road 18', 
+        street: 'House 654, Road 3, Mirpur', 
         city: 'Dhaka', 
         state: 'Dhaka', 
-        zipCode: '1211', 
+        zipCode: '1216', 
         country: 'Bangladesh',
-        latitude: 23.7937,
-        longitude: 90.4066
+        latitude: 23.8000,
+        longitude: 90.3500
       },
       { 
-        street: 'House 147, Road 22', 
+        street: 'House 987, Road 18, Mohammadpur', 
         city: 'Dhaka', 
         state: 'Dhaka', 
-        zipCode: '1214', 
+        zipCode: '1207', 
         country: 'Bangladesh',
-        latitude: 23.7937,
-        longitude: 90.4066
+        latitude: 23.7600,
+        longitude: 90.3600
       },
       { 
-        street: 'House 258, Road 7', 
+        street: 'House 147, Road 22, Lalmatia', 
         city: 'Dhaka', 
         state: 'Dhaka', 
-        zipCode: '1206', 
+        zipCode: '1207', 
         country: 'Bangladesh',
-        latitude: 23.7937,
-        longitude: 90.4066
+        latitude: 23.7500,
+        longitude: 90.3700
+      },
+      { 
+        street: 'House 258, Road 7, Tejgaon', 
+        city: 'Dhaka', 
+        state: 'Dhaka', 
+        zipCode: '1208', 
+        country: 'Bangladesh',
+        latitude: 23.7800,
+        longitude: 90.4000
+      },
+      { 
+        street: 'House 369, Road 5, Farmgate', 
+        city: 'Dhaka', 
+        state: 'Dhaka', 
+        zipCode: '1215', 
+        country: 'Bangladesh',
+        latitude: 23.7700,
+        longitude: 90.3900
+      },
+      { 
+        street: 'House 741, Road 11, Bashundhara', 
+        city: 'Dhaka', 
+        state: 'Dhaka', 
+        zipCode: '1229', 
+        country: 'Bangladesh',
+        latitude: 23.8200,
+        longitude: 90.4200
+      },
+      { 
+        street: 'House 852, Road 14, Niketan', 
+        city: 'Dhaka', 
+        state: 'Dhaka', 
+        zipCode: '1212', 
+        country: 'Bangladesh',
+        latitude: 23.7900,
+        longitude: 90.4100
+      },
+      { 
+        street: 'House 963, Road 9, Baridhara', 
+        city: 'Dhaka', 
+        state: 'Dhaka', 
+        zipCode: '1212', 
+        country: 'Bangladesh',
+        latitude: 23.8000,
+        longitude: 90.4200
       }
     ];
 
@@ -181,35 +217,46 @@ router.post('/', async (req, res) => {
         }
       ];
       
-      // Add transit history if not delivered
-      if (randomStatus !== 'delivered') {
-        history.push({
-          location: 'Dhaka Central Hub, Bangladesh',
-          latitude: 23.7937,
-          longitude: 90.4066,
-          status: 'in_transit',
-          timestamp: new Date(createdAt.getTime() + Math.random() * 24 * 60 * 60 * 1000 + 24 * 60 * 60 * 1000)
-        });
-        
-        if (randomStatus === 'out_for_delivery') {
-          history.push({
-            location: `${randomToAddress.city}, ${randomToAddress.country}`,
-            latitude: randomToAddress.latitude,
-            longitude: randomToAddress.longitude,
-            status: 'out_for_delivery',
-            timestamp: new Date(estimatedDelivery.getTime() - Math.random() * 24 * 60 * 60 * 1000)
-          });
-        }
-      } else {
-        // Add delivery history
-        history.push({
-          location: `${randomToAddress.city}, ${randomToAddress.country}`,
-          latitude: randomToAddress.latitude,
-          longitude: randomToAddress.longitude,
-          status: 'delivered',
-          timestamp: estimatedDelivery
-        });
-      }
+             // Add transit history if not delivered
+       if (randomStatus !== 'delivered') {
+         // Add multiple transit points for variety
+         const transitPoints = [
+           { location: 'Dhaka Central Hub, Bangladesh', lat: 23.7937, lng: 90.4066 },
+           { location: 'Dhaka Airport Hub, Bangladesh', lat: 23.8433, lng: 90.3978 },
+           { location: 'Dhaka Port Hub, Bangladesh', lat: 23.7000, lng: 90.4000 },
+           { location: 'Dhaka Railway Hub, Bangladesh', lat: 23.7300, lng: 90.4100 },
+           { location: 'Dhaka Bus Terminal Hub, Bangladesh', lat: 23.7600, lng: 90.3800 }
+         ];
+         
+         // Randomly select transit points
+         const randomTransit = transitPoints[Math.floor(Math.random() * transitPoints.length)];
+         history.push({
+           location: randomTransit.location,
+           latitude: randomTransit.lat,
+           longitude: randomTransit.lng,
+           status: 'in_transit',
+           timestamp: new Date(createdAt.getTime() + Math.random() * 24 * 60 * 60 * 1000 + 24 * 60 * 60 * 1000)
+         });
+         
+         if (randomStatus === 'out_for_delivery') {
+           history.push({
+             location: `${randomToAddress.city}, ${randomToAddress.country}`,
+             latitude: randomToAddress.latitude,
+             longitude: randomToAddress.longitude,
+             status: 'out_for_delivery',
+             timestamp: new Date(estimatedDelivery.getTime() - Math.random() * 24 * 60 * 60 * 1000)
+           });
+         }
+       } else {
+         // Add delivery history
+         history.push({
+           location: `${randomToAddress.city}, ${randomToAddress.country}`,
+           latitude: randomToAddress.latitude,
+           longitude: randomToAddress.longitude,
+           status: 'delivered',
+           timestamp: estimatedDelivery
+         });
+       }
       
       const parcel = new Parcel({
         trackingNumber: trackingNumber,
@@ -259,35 +306,46 @@ router.post('/', async (req, res) => {
         }
       ];
       
-      // Add transit history if not delivered
-      if (randomStatus !== 'delivered') {
-        adminHistory.push({
-          location: 'Dhaka Central Hub, Bangladesh',
-          latitude: 23.7937,
-          longitude: 90.4066,
-          status: 'in_transit',
-          timestamp: new Date(createdAt.getTime() + Math.random() * 24 * 60 * 60 * 1000 + 24 * 60 * 60 * 1000)
-        });
-        
-        if (randomStatus === 'out_for_delivery') {
-          adminHistory.push({
-            location: `${randomToAddress.city}, ${randomToAddress.country}`,
-            latitude: randomToAddress.latitude,
-            longitude: randomToAddress.longitude,
-            status: 'out_for_delivery',
-            timestamp: new Date(estimatedDelivery.getTime() - Math.random() * 24 * 60 * 60 * 1000)
-          });
-        }
-      } else {
-        // Add delivery history
-        adminHistory.push({
-          location: `${randomToAddress.city}, ${randomToAddress.country}`,
-          latitude: randomToAddress.latitude,
-          longitude: randomToAddress.longitude,
-          status: 'delivered',
-          timestamp: estimatedDelivery
-        });
-      }
+             // Add transit history if not delivered
+       if (randomStatus !== 'delivered') {
+         // Add multiple transit points for variety
+         const transitPoints = [
+           { location: 'Dhaka Central Hub, Bangladesh', lat: 23.7937, lng: 90.4066 },
+           { location: 'Dhaka Airport Hub, Bangladesh', lat: 23.8433, lng: 90.3978 },
+           { location: 'Dhaka Port Hub, Bangladesh', lat: 23.7000, lng: 90.4000 },
+           { location: 'Dhaka Railway Hub, Bangladesh', lat: 23.7300, lng: 90.4100 },
+           { location: 'Dhaka Bus Terminal Hub, Bangladesh', lat: 23.7600, lng: 90.3800 }
+         ];
+         
+         // Randomly select transit points
+         const randomTransit = transitPoints[Math.floor(Math.random() * transitPoints.length)];
+         adminHistory.push({
+           location: randomTransit.location,
+           latitude: randomTransit.lat,
+           longitude: randomTransit.lng,
+           status: 'in_transit',
+           timestamp: new Date(createdAt.getTime() + Math.random() * 24 * 60 * 60 * 1000 + 24 * 60 * 60 * 1000)
+         });
+         
+         if (randomStatus === 'out_for_delivery') {
+           adminHistory.push({
+             location: `${randomToAddress.city}, ${randomToAddress.country}`,
+             latitude: randomToAddress.latitude,
+             longitude: randomToAddress.longitude,
+             status: 'out_for_delivery',
+             timestamp: new Date(estimatedDelivery.getTime() - Math.random() * 24 * 60 * 60 * 1000)
+           });
+         }
+       } else {
+         // Add delivery history
+         adminHistory.push({
+           location: `${randomToAddress.city}, ${randomToAddress.country}`,
+           latitude: randomToAddress.latitude,
+           longitude: randomToAddress.longitude,
+           status: 'delivered',
+           timestamp: estimatedDelivery
+         });
+       }
       
       const adminParcel = new Parcel({
         trackingNumber: trackingNumber,
