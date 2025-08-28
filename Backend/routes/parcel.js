@@ -6,6 +6,19 @@ const { validateTrackingNumber, validateCoordinates } = require('../utils/valida
 const { protect } = require('../middleware/auth');
 const { requireAdmin } = require('../middleware/admin');
 
+/**
+ * Parcel Routes Security Model:
+ * - CREATE: Admin only (POST /)
+ * - READ: Users can view their own parcels, admins can view all (GET /, GET /:trackingNumber)
+ * - UPDATE STATUS: Admin only (PUT /:id/status)
+ * - DELETE: Not implemented (would be admin only)
+ * 
+ * Regular users can only:
+ * - View their own parcels
+ * - Track their own parcels
+ * - Cannot modify any parcel data or status
+ */
+
 const router = express.Router();
 
 // Validation middleware
@@ -21,9 +34,9 @@ const handleValidationErrors = (req, res, next) => {
   next();
 };
 
-// POST /api/parcels - Create a new parcel (Admin only)
+// POST /api/parcels - Create a new parcel (ADMIN ONLY)
 router.post('/',
-  requireAdmin,
+  requireAdmin, // Only admins can create parcels
   [
     body('trackingNumber')
       .isLength({ min: 5, max: 20 })
@@ -103,6 +116,7 @@ router.post('/',
 );
 
 // GET /api/parcels/:trackingNumber - Get parcel by tracking number
+// Regular users can only view their own parcels, admins can view any parcel
 router.get('/:trackingNumber',
   protect,
   [
@@ -140,9 +154,10 @@ router.get('/:trackingNumber',
   }
 );
 
-// PUT /api/parcels/:id/status - Add new status update to parcel's history
+// PUT /api/parcels/:id/status - Add new status update to parcel's history (ADMIN ONLY)
 router.put('/:id/status',
   protect,
+  requireAdmin, // Only admins can update parcel status
   [
     param('id')
       .isMongoId()
@@ -166,13 +181,8 @@ router.put('/:id/status',
       const { id } = req.params;
       const { status, location, latitude, longitude } = req.body;
 
-      // For admins, allow updating any parcel; for regular users, only their own parcels
-      const query = { _id: id };
-      if (req.user.role !== 'admin') {
-        query.user = req.user._id;
-      }
-      
-      const parcel = await Parcel.findOne(query);
+      // Find the parcel (admin can update any parcel)
+      const parcel = await Parcel.findById(id);
 
       if (!parcel) {
         return res.status(404).json({
@@ -189,6 +199,9 @@ router.put('/:id/status',
         status
       });
 
+      // Update the main status as well
+      parcel.status = status;
+
       const updatedParcel = await parcel.save();
 
       res.json({
@@ -203,6 +216,7 @@ router.put('/:id/status',
 );
 
 // GET /api/parcels - List all parcels (with pagination)
+// Regular users can only see their own parcels, admins can see all parcels
 router.get('/', protect, async (req, res, next) => {
   try {
     const page = parseInt(req.query.page) || 1;
