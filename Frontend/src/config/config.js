@@ -3,7 +3,7 @@ const config = {
     apiUrl: 'http://localhost:5000'
   },
   production: {
-    apiUrl: process.env.REACT_APP_API_URL || 'https://parcel-tracker-taupe.vercel.app'
+    apiUrl: 'https://parcel-tracker-taupe.vercel.app' // Force use of new backend URL
   }
 };
 
