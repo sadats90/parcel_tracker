@@ -23,13 +23,18 @@ const corsOptions = {
   origin: [
     'http://localhost:3000', 
     'http://127.0.0.1:3000',
-    'https://*.vercel.app', // Allow all Vercel domains
-    'https://*.vercel.app'  // Allow your specific frontend domain
+    'https://parcel-tracker-z868.vercel.app', // Your specific frontend domain
+    'https://*.vercel.app' // Allow all Vercel domains as fallback
   ],
   credentials: true,
-  optionsSuccessStatus: 200
+  optionsSuccessStatus: 200,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 };
 app.use(cors(corsOptions));
+
+// Handle preflight requests
+app.options('*', cors(corsOptions));
 
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
