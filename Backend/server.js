@@ -20,7 +20,12 @@ app.use(helmet());
 
 // CORS configuration
 const corsOptions = {
-  origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
+  origin: [
+    'http://localhost:3000', 
+    'http://127.0.0.1:3000',
+    'https://*.vercel.app', // Allow all Vercel domains
+    'https://*.vercel.app'  // Allow your specific frontend domain
+  ],
   credentials: true,
   optionsSuccessStatus: 200
 };
