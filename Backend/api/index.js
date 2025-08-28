@@ -64,6 +64,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/auth', authRoutes);
 app.use('/api/parcels', parcelRoutes);
 app.use('/create-admin', require('./create-admin'));
+app.use('/seed-data', require('./seed-data'));
 
 // Health check endpoint
 app.get('/health', (req, res) => {
