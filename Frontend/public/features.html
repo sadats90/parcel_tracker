@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parcel Tracker - Features & Capabilities</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 5px solid #667eea;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .feature-card h3 {
+            color: #667eea;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .feature-card ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .feature-card li {
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .feature-card li:before {
+            content: "✓";
+            color: #28a745;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+
+        .feature-card li:last-child {
+            border-bottom: none;
+        }
+
+        .tech-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .tech-section h2 {
+            color: #667eea;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .tech-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid #e9ecef;
+        }
+
+        .tech-item h4 {
+            color: #495057;
+            margin-bottom: 10px;
+        }
+
+        .tech-item p {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .security-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .security-section h2 {
+            color: #667eea;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .role-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .role-card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 4px solid #28a745;
+        }
+
+        .role-card.admin {
+            border-left-color: #dc3545;
+        }
+
+        .role-card h4 {
+            color: #495057;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .role-card ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .role-card li {
+            padding: 5px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .role-card li:before {
+            content: "•";
+            color: #667eea;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+
+        .dashboard-section, .mapping-section, .deployment-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .dashboard-section h2, .mapping-section h2, .deployment-section h2 {
+            color: #667eea;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .feature-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #e9ecef;
+        }
+
+        .feature-item h4 {
+            color: #495057;
+            margin-bottom: 8px;
+        }
+
+        .feature-item p {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 40px;
+            padding: 20px;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .tech-grid, .role-cards, .feature-list {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .icon {
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📦 Parcel Tracker</h1>
+            <p>Enterprise-Grade Parcel Tracking & Management System</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <h3><span class="icon">📍</span> Real-time GPS Tracking</h3>
+                <ul>
+                    <li>Interactive Leaflet maps showing parcel journey</li>
+                    <li>Live location updates and status tracking</li>
+                    <li>Real-time GPS coordinates and route visualization</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <h3><span class="icon">👥</span> Multi-Role User System</h3>
+                <ul>
+                    <li>Admin and regular user permissions</li>
+                    <li>Role-based access control</li>
+                    <li>Secure user management</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <h3><span class="icon">📦</span> Comprehensive Management</h3>
+                <ul>
+                    <li>Status updates and history tracking</li>
+                    <li>Advanced search and filtering</li>
+                    <li>Complete parcel lifecycle management</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <h3><span class="icon">🔍</span> Advanced Search & Filter</h3>
+                <ul>
+                    <li>Search by tracking number</li>
+                    <li>Filter by status and location</li>
+                    <li>Real-time search results</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <h3><span class="icon">🔐</span> Secure Authentication</h3>
+                <ul>
+                    <li>JWT tokens for secure sessions</li>
+                    <li>Role-based access control</li>
+                    <li>Protected API endpoints</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <h3><span class="icon">📱</span> Responsive Design</h3>
+                <ul>
+                    <li>Optimized for desktop and mobile</li>
+                    <li>Cross-platform compatibility</li>
+                    <li>Modern user interface</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="tech-section">
+            <h2>🛠 Technical Implementation</h2>
+            <p style="text-align: center; margin-bottom: 20px; font-size: 1.1rem;">
+                Built with the powerful MERN stack for scalability and performance
+            </p>
+            <div class="tech-grid">
+                <div class="tech-item">
+                    <h4>MongoDB</h4>
+                    <p>Flexible document storage with MongoDB Atlas cloud integration</p>
+                </div>
+                <div class="tech-item">
+                    <h4>Express.js</h4>
+                    <p>RESTful API endpoints with comprehensive middleware</p>
+                </div>
+                <div class="tech-item">
+                    <h4>React</h4>
+                    <p>Frontend with Context API for efficient state management</p>
+                </div>
+                <div class="tech-item">
+                    <h4>Node.js</h4>
+                    <p>High-performance runtime environment</p>
+                </div>
+                <div class="tech-item">
+                    <h4>Leaflet.js</h4>
+                    <p>Interactive mapping and location services</p>
+                </div>
+                <div class="tech-item">
+                    <h4>JWT Authentication</h4>
+                    <p>Secure token-based authentication system</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="security-section">
+            <h2>🔐 Security & Access Control</h2>
+            <div class="role-cards">
+                <div class="role-card admin">
+                    <h4>👑 Admin Users</h4>
+                    <ul>
+                        <li>Create and manage parcels</li>
+                        <li>Update parcel status and location</li>
+                        <li>View all parcels across the system</li>
+                        <li>Access comprehensive management dashboard</li>
+                        <li>Full system administration capabilities</li>
+                    </ul>
+                </div>
+                <div class="role-card">
+                    <h4>👤 Regular Users</h4>
+                    <ul>
+                        <li>View and track their own parcels</li>
+                        <li>Access parcel history and journey maps</li>
+                        <li>No ability to modify parcel data or status</li>
+                        <li>Secure access to personal shipment information</li>
+                        <li>Real-time tracking updates</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-section">
+            <h2>📊 Management Dashboard</h2>
+            <p style="text-align: center; margin-bottom: 20px; font-size: 1.1rem;">
+                Advanced admin interface with comprehensive parcel management capabilities
+            </p>
+            <div class="feature-list">
+                <div class="feature-item">
+                    <h4>📈 Real-time Monitoring</h4>
+                    <p>Live parcel status updates and system overview</p>
+                </div>
+                <div class="feature-item">
+                    <h4>🔍 Advanced Search</h4>
+                    <p>Powerful filtering and search capabilities</p>
+                </div>
+                <div class="feature-item">
+                    <h4>📅 History Tracking</h4>
+                    <p>Complete status history with timestamps</p>
+                </div>
+                <div class="feature-item">
+                    <h4>🗺️ Route Visualization</h4>
+                    <p>Interactive maps showing delivery routes</p>
+                </div>
+                <div class="feature-item">
+                    <h4>⚡ Bulk Operations</h4>
+                    <p>Efficient management of multiple parcels</p>
+                </div>
+                <div class="feature-item">
+                    <h4>📊 Analytics</h4>
+                    <p>Performance metrics and delivery insights</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mapping-section">
+            <h2>🗺️ Mapping & Visualization</h2>
+            <p style="text-align: center; margin-bottom: 20px; font-size: 1.1rem;">
+                Interactive Leaflet maps providing comprehensive parcel journey visualization
+            </p>
+            <div class="feature-list">
+                <div class="feature-item">
+                    <h4>📍 Location Markers</h4>
+                    <p>Pickup and delivery location visualization</p>
+                </div>
+                <div class="feature-item">
+                    <h4>🛣️ Journey Routes</h4>
+                    <p>Complete transit point and route mapping</p>
+                </div>
+                <div class="feature-item">
+                    <h4>🔄 Real-time Updates</h4>
+                    <p>Live status updates with location markers</p>
+                </div>
+                <div class="feature-item">
+                    <h4>🌍 Geographic Distribution</h4>
+                    <p>Parcel distribution across Dhaka region</p>
+                </div>
+                <div class="feature-item">
+                    <h4>🏢 Transit Hubs</h4>
+                    <p>Multiple delivery zones and transit points</p>
+                </div>
+                <div class="feature-item">
+                    <h4>📱 Interactive Controls</h4>
+                    <p>Zoom, pan, and explore functionality</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="deployment-section">
+            <h2>🚀 Deployment & Scalability</h2>
+            <p style="text-align: center; margin-bottom: 20px; font-size: 1.1rem;">
+                Fully deployed on Vercel with enterprise-grade infrastructure
+            </p>
+            <div class="feature-list">
+                <div class="feature-item">
+                    <h4>🔄 CI/CD Pipeline</h4>
+                    <p>Automated deployment via GitHub integration</p>
+                </div>
+                <div class="feature-item">
+                    <h4>☁️ Serverless Architecture</h4>
+                    <p>Scalable backend with automatic scaling</p>
+                </div>
+                <div class="feature-item">
+                    <h4>🌐 Global CDN</h4>
+                    <p>Worldwide content distribution network</p>
+                </div>
+                <div class="feature-item">
+                    <h4>⚙️ Environment Management</h4>
+                    <p>Configuration-based environment setup</p>
+                </div>
+                <div class="feature-item">
+                    <h4>🗄️ Cloud Database</h4>
+                    <p>MongoDB Atlas cloud integration</p>
+                </div>
+                <div class="feature-item">
+                    <h4>📊 Monitoring</h4>
+                    <p>Real-time performance monitoring</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>This system provides a robust, scalable solution for parcel tracking with enterprise-grade security and user experience features.</p>
+            <p style="margin-top: 10px;">Built with ❤️ using modern web technologies</p>
+        </div>
+    </div>
+</body>
+</html>
+
