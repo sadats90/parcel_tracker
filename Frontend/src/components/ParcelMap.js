@@ -13,130 +13,155 @@ L.Icon.Default.mergeOptions({
 const ParcelMap = ({ statusHistory, center = [23.7937, 90.4066], zoom = 10 }) => {
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
-  const [isMapReady, setIsMapReady] = useState(false);
-  const [mapError, setMapError] = useState(null);
+  const [mapReady, setMapReady] = useState(false);
 
   useEffect(() => {
-    if (!mapRef.current) return;
+    if (!mapRef.current || !statusHistory || statusHistory.length === 0) {
+      setMapReady(false);
+      return;
+    }
 
-    // Small delay to ensure DOM is ready
+    console.log('ParcelMap: Initializing with statusHistory:', statusHistory);
+
+    // Clean up existing map
+    if (mapInstanceRef.current) {
+      try {
+        mapInstanceRef.current.remove();
+      } catch (error) {
+        console.error('Error removing existing map:', error);
+      }
+      mapInstanceRef.current = null;
+    }
+
+    // Initialize map with a small delay to ensure DOM is ready
     const initMap = () => {
       try {
-        // Check if map already exists and remove it
-        if (mapInstanceRef.current) {
-          mapInstanceRef.current.remove();
-          mapInstanceRef.current = null;
+        // Check if container exists
+        if (!mapRef.current) {
+          console.warn('Map container not found, retrying...');
+          setTimeout(initMap, 50);
+          return;
         }
 
         // Initialize map
         const map = L.map(mapRef.current, {
-          preferCanvas: true,
           zoomControl: true,
           attributionControl: true
         }).setView(center, zoom);
         
         // Add OpenStreetMap tiles
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '© OpenStreetMap contributors',
-          maxZoom: 19
+          attribution: '© OpenStreetMap contributors'
         }).addTo(map);
 
-        // Wait for map to be ready
-        map.whenReady(() => {
-          mapInstanceRef.current = map;
-          setIsMapReady(true);
-          setMapError(null);
-        });
+        mapInstanceRef.current = map;
+        setMapReady(true);
+        console.log('Map initialized successfully');
 
       } catch (error) {
         console.error('Error initializing map:', error);
-        setIsMapReady(false);
-        setMapError('Failed to initialize map');
+        // Retry after a delay
+        setTimeout(initMap, 100);
       }
     };
 
-    // Use setTimeout to ensure DOM is ready
-    const timer = setTimeout(initMap, 100);
+    // Start initialization with a small delay
+    setTimeout(initMap, 10);
 
     return () => {
-      clearTimeout(timer);
       if (mapInstanceRef.current) {
         try {
           mapInstanceRef.current.remove();
         } catch (error) {
-          console.error('Error removing map:', error);
+          console.error('Error removing map in cleanup:', error);
         }
         mapInstanceRef.current = null;
       }
-      setIsMapReady(false);
-      setMapError(null);
+      setMapReady(false);
     };
-  }, [center, zoom]);
+  }, [statusHistory, center, zoom]);
 
+  // Separate useEffect for adding markers after map is ready
   useEffect(() => {
-    console.log('ParcelMap received statusHistory:', statusHistory);
-    if (!isMapReady || !mapInstanceRef.current || !statusHistory || statusHistory.length === 0) return;
+    if (!mapReady || !mapInstanceRef.current || !statusHistory || statusHistory.length === 0) return;
 
-    try {
-      const map = mapInstanceRef.current;
-      
-      // Clear existing markers and polylines
-      map.eachLayer((layer) => {
-        if (layer instanceof L.Marker || layer instanceof L.Polyline) {
-          map.removeLayer(layer);
-        }
-      });
+    const map = mapInstanceRef.current;
+    console.log('ParcelMap: Adding markers to ready map');
 
-      const locations = [];
-      const markers = [];
+    // Add markers and polylines
+    const locations = [];
+    const markers = [];
 
-      // Add markers for each location
-      statusHistory.forEach((status, index) => {
-        if (status.latitude && status.longitude) {
-          const lat = parseFloat(status.latitude);
-          const lng = parseFloat(status.longitude);
-          
-          // Validate coordinates
-          if (isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
-            console.warn('Invalid coordinates:', { lat, lng, status });
-            return;
+    statusHistory.forEach((status, index) => {
+      if (status.latitude && status.longitude) {
+        const lat = parseFloat(status.latitude);
+        const lng = parseFloat(status.longitude);
+        
+        // Validate coordinates
+        if (!isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
+          try {
+            const marker = L.marker([lat, lng])
+              .bindPopup(`
+                <div>
+                  <strong>${status.status.replace('_', ' ').toUpperCase()}</strong><br>
+                  <strong>Location:</strong> ${status.location}<br>
+                  <small>${new Date(status.timestamp).toLocaleString()}</small>
+                </div>
+              `)
+              .addTo(map);
+            
+            markers.push(marker);
+            locations.push([lat, lng]);
+          } catch (error) {
+            console.error(`Error creating marker ${index}:`, error, { lat, lng, status });
           }
-
-          const marker = L.marker([lat, lng])
-            .bindPopup(`
-              <div>
-                <strong>${status.status.replace('_', ' ').toUpperCase()}</strong><br>
-                <strong>Location:</strong> ${status.location}<br>
-                <small>${new Date(status.timestamp).toLocaleString()}</small>
-              </div>
-            `)
-            .addTo(map);
-          
-          markers.push(marker);
-          locations.push([lat, lng]);
+        } else {
+          console.warn(`Invalid coordinates for status ${index}:`, { lat, lng, status });
         }
-      });
+      } else {
+        console.warn(`Missing coordinates for status ${index}:`, status);
+      }
+    });
 
-      // Add polyline connecting locations in order
-      if (locations.length > 1) {
+    console.log('ParcelMap: Created markers:', markers.length, 'locations:', locations.length);
+
+    // Add polyline connecting locations
+    if (locations.length > 1) {
+      try {
+        console.log('ParcelMap: Adding polyline with locations:', locations);
         L.polyline(locations, {
           color: '#007bff',
           weight: 3,
           opacity: 0.7
         }).addTo(map);
+      } catch (error) {
+        console.error('Error adding polyline:', error, 'locations:', locations);
       }
-
-      // Fit map to show all markers
-      if (markers.length > 0) {
-        const group = new L.featureGroup(markers);
-        map.fitBounds(group.getBounds().pad(0.1));
-      }
-
-    } catch (error) {
-      console.error('Error updating map markers:', error);
     }
 
-  }, [statusHistory, isMapReady]);
+    // Fit map to show all markers
+    if (markers.length > 0) {
+      try {
+        const group = new L.featureGroup(markers);
+        const bounds = group.getBounds();
+        console.log('ParcelMap: Bounds:', bounds);
+        if (bounds.isValid()) {
+          map.fitBounds(bounds.pad(0.1));
+        } else {
+          console.warn('ParcelMap: Invalid bounds, using fallback');
+          // Fallback: set view to first marker
+          const firstMarker = markers[0];
+          if (firstMarker) {
+            map.setView(firstMarker.getLatLng(), zoom);
+          }
+        }
+      } catch (error) {
+        console.error('Error fitting bounds:', error);
+        // Fallback: set view to center
+        map.setView(center, zoom);
+      }
+    }
+  }, [mapReady, statusHistory, center, zoom]);
 
   return (
     <div>
@@ -156,50 +181,40 @@ const ParcelMap = ({ statusHistory, center = [23.7937, 90.4066], zoom = 10 }) =>
         </div>
       )}
       
-      {statusHistory && statusHistory.length > 0 && !isMapReady && !mapError && (
-        <div style={{ 
-          height: '400px', 
-          width: '100%',
-          border: '1px solid #ddd',
-          borderRadius: '4px',
-          backgroundColor: '#f8f9fa',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: '#666'
-        }}>
-          Loading map...
+      {statusHistory && statusHistory.length > 0 && (
+        <div style={{ position: 'relative' }}>
+          {!mapReady && (
+            <div style={{ 
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              zIndex: 1000,
+              backgroundColor: '#f8f9fa',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#666',
+              border: '1px solid #ddd',
+              borderRadius: '4px'
+            }}>
+              Loading map...
+            </div>
+          )}
+          <div 
+            ref={mapRef} 
+            className="map-container"
+            style={{ 
+              height: '400px', 
+              width: '100%',
+              border: '1px solid #ddd',
+              borderRadius: '4px',
+              backgroundColor: '#f8f9fa'
+            }}
+          />
         </div>
       )}
-      
-      {mapError && (
-        <div style={{ 
-          height: '400px', 
-          width: '100%',
-          border: '1px solid #dc3545',
-          borderRadius: '4px',
-          backgroundColor: '#f8d7da',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: '#721c24'
-        }}>
-          Error: {mapError}
-        </div>
-      )}
-      
-      <div 
-        ref={mapRef} 
-        className="map-container"
-        style={{ 
-          height: '400px', 
-          width: '100%',
-          border: '1px solid #ddd',
-          borderRadius: '4px',
-          backgroundColor: '#f8f9fa',
-          display: (statusHistory && statusHistory.length > 0 && isMapReady && !mapError) ? 'block' : 'none'
-        }}
-      />
     </div>
   );
 };
